@@ -1,0 +1,264 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "showMenu",
+			"inputs": [
+				{"components":[{"name":"totalPaidAmount","type":"uint256"},{"name":"totalNotPaidAmount","type":"uint256"},{"name":"totalPaidPrice","type":"uint256"}],"name":"summary","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "buyProduct",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_buyProduct",
+			"inputs": [
+				{"name":"value","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "__buyProduct",
+			"inputs": [
+				{"name":"value","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onProductBought",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onBoughtError",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showShoppingList",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_showShoppingList",
+			"inputs": [
+				{"components":[{"name":"id","type":"uint256"},{"name":"name","type":"bytes"},{"name":"amount","type":"uint256"},{"name":"whenCreated","type":"uint256"},{"name":"purchased","type":"bool"},{"name":"totalPrice","type":"uint256"}],"name":"purchases","type":"tuple[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showShoppingListRepeat",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "removeFromShoppingList",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_removeFromShoppingList",
+			"inputs": [
+				{"name":"value","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "successfullyDeleted",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeleteError",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeploySuccess",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showData",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showDataRepeat",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "start",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setContractCode",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "savePublicKey",
+			"inputs": [
+				{"name":"value","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "checkIfValid",
+			"inputs": [
+				{"name":"accType","type":"int8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "creditAccount",
+			"inputs": [
+				{"name":"_creationAccount","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onCreditError",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onCreditErrorAnswer",
+			"inputs": [
+				{"name":"tryAgain","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployError",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployErrorAnswer",
+			"inputs": [
+				{"name":"tryAgain","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "waitBeforeCredit",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "checkIfContractHasBalance",
+			"inputs": [
+				{"name":"accType","type":"int8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getDebotInfo",
+			"id": "0xDEB",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"name","type":"bytes"},
+				{"name":"version","type":"bytes"},
+				{"name":"publisher","type":"bytes"},
+				{"name":"caption","type":"bytes"},
+				{"name":"author","type":"bytes"},
+				{"name":"support","type":"address"},
+				{"name":"hello","type":"bytes"},
+				{"name":"language","type":"bytes"},
+				{"name":"dabi","type":"bytes"},
+				{"name":"icon","type":"bytes"}
+			]
+		},
+		{
+			"name": "getRequiredInterfaces",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"interfaces","type":"uint256[]"}
+			]
+		},
+		{
+			"name": "getDebotOptions",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"options","type":"uint8"},
+				{"name":"debotAbi","type":"bytes"},
+				{"name":"targetAbi","type":"bytes"},
+				{"name":"targetAddr","type":"address"}
+			]
+		},
+		{
+			"name": "setABI",
+			"inputs": [
+				{"name":"dabi","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}
