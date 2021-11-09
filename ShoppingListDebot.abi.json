@@ -13,6 +13,7 @@
 		{
 			"name": "buyProduct",
 			"inputs": [
+				{"name":"index","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -43,6 +44,8 @@
 		{
 			"name": "onBoughtError",
 			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -50,6 +53,7 @@
 		{
 			"name": "showShoppingList",
 			"inputs": [
+				{"name":"index","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -57,14 +61,16 @@
 		{
 			"name": "_showShoppingList",
 			"inputs": [
-				{"components":[{"name":"id","type":"uint256"},{"name":"name","type":"bytes"},{"name":"amount","type":"uint256"},{"name":"whenCreated","type":"uint256"},{"name":"purchased","type":"bool"},{"name":"totalPrice","type":"uint256"}],"name":"purchases","type":"tuple[]"}
+				{"components":[{"name":"id","type":"uint256"},{"name":"name","type":"bytes"},{"name":"amount","type":"uint256"},{"name":"whenCreated","type":"uint256"},{"name":"purchased","type":"bool"},{"name":"totalPrice","type":"uint256"},{"name":"deleted","type":"bool"}],"name":"purchasesList","type":"tuple[]"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "showShoppingListRepeat",
+			"name": "showShoppingListError",
 			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -72,6 +78,7 @@
 		{
 			"name": "removeFromShoppingList",
 			"inputs": [
+				{"name":"index","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -94,6 +101,8 @@
 		{
 			"name": "onDeleteError",
 			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -115,6 +124,8 @@
 		{
 			"name": "showDataRepeat",
 			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -144,9 +155,9 @@
 			]
 		},
 		{
-			"name": "checkIfValid",
+			"name": "checkAccountType",
 			"inputs": [
-				{"name":"accType","type":"int8"}
+				{"name":"acc_type","type":"int8"}
 			],
 			"outputs": [
 			]
@@ -154,7 +165,7 @@
 		{
 			"name": "creditAccount",
 			"inputs": [
-				{"name":"_creationAccount","type":"address"}
+				{"name":"value","type":"address"}
 			],
 			"outputs": [
 			]
@@ -162,6 +173,8 @@
 		{
 			"name": "onCreditError",
 			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -199,7 +212,7 @@
 		{
 			"name": "checkIfContractHasBalance",
 			"inputs": [
-				{"name":"accType","type":"int8"}
+				{"name":"acc_type","type":"int8"}
 			],
 			"outputs": [
 			]

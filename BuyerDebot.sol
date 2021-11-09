@@ -16,17 +16,18 @@ contract BuyerDebot is BaseListDebot{
             [
                 MenuItem("Add product to shopping list", "", tvm.functionId(addToShoppingList)),
                 MenuItem("Remove product from shopping list", "", tvm.functionId(removeFromShoppingList)),
-                MenuItem("Show your shopping list", "", tvm.functionId(showShoppingList))
+                MenuItem("Show my shopping list", "", tvm.functionId(showShoppingList))
             ]
         );
     }
 
-    function addToShoppingList() public{
+    function addToShoppingList(uint32 index) public{
+        index = index;
         Terminal.input(tvm.functionId(onNameWritten), "Please, enter the name of your product", false);
     }
 
-    function onNameWritten(string name) public{
-        nameOfCurrentPurchase = name;
+    function onNameWritten(string value) public{
+        nameOfCurrentPurchase = value;
         Terminal.input(tvm.functionId(onAmountWritten), "Please, provide amount of items to purchase", false);
     }
 
@@ -49,9 +50,9 @@ contract BuyerDebot is BaseListDebot{
         showData();
     }
 
-    function onProductAddError() public{
+    function onProductAddError(uint32 sdkError, uint32 exitCode) public{
         Terminal.print(0, "Error occured. Please, try again");
-        addToShoppingList();
+        addToShoppingList(0);
     }
     
 }

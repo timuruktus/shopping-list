@@ -11,9 +11,6 @@ import "./core/ConfirmInput.sol";
 import "./core/Debot.sol";
 import "./core/Menu.sol";
 
-
-
-
 abstract contract BaseInitDebot is Debot{
     
     uint userPubKey;
@@ -40,36 +37,37 @@ abstract contract BaseInitDebot is Debot{
 
     function savePublicKey(string value) public {
         (uint res, bool valid) = stoi("0x"+value);
-        if (valid) {
+        if(valid) {
             userPubKey = res;
             Terminal.print(0, "Checking if you already have a Shopping list. Please wait ...");
             TvmCell deployState = tvm.insertPubkey(contractStateInit, userPubKey);
             contractAddress = address.makeAddrStd(0, tvm.hash(deployState));
             Terminal.print(0, format( "Info: your Shopping list contract address is: {}", contractAddress));
-            Sdk.getAccountType(tvm.functionId(checkIfValid), contractAddress);
+            Sdk.getAccountType(tvm.functionId(checkAccountType), contractAddress);
         } else {
             Terminal.input(tvm.functionId(savePublicKey),"Wrong public key. Try again!\nPlease enter your public key",false);
         }
     }
 
-    function checkIfValid(int8 accType) public {
-        if(accType == ACTIVE) { 
-            Terminal.print(tvm.functionId(showData), "Your account is ready");
-        }else if(accType == NOT_ENOUGH_BALANCE)  { 
+    function checkAccountType(int8 acc_type) public {
+        if(acc_type == ACTIVE) { 
+            Terminal.print(0, "Your account is ready");
+            showData();
+        }else if(acc_type == NOT_ENOUGH_BALANCE)  { 
             Terminal.print(0, "You don't have a Shopping list yet, so a new contract with an initial balance of 0.2 tokens will be deployed");
             AddressInput.get(tvm.functionId(creditAccount),"Select a wallet for payment. We will ask you to sign two transactions.");
-        }else if(accType == NOT_DEPLOYED) { 
+        }else if(acc_type == NOT_DEPLOYED) { 
             Terminal.print(0, format(
                 "Deploying new contract. If an error occurs, check if your Shopping list contract has enough tokens on its balance."
             ));
             deploy();
-        }else if(accType == FROZEN) {  
+        }else if(acc_type == FROZEN) {  
             Terminal.print(0, format("Can not continue: account {} is frozen", contractAddress));
         }
     }
 
-    function creditAccount(address _creationAccount) public {
-        creationAccount = _creationAccount;
+    function creditAccount(address value) public {
+        creationAccount = value;
         optional(uint256) pubkey = 0;
         TvmCell empty;
         Transactable(creationAccount).sendTransaction{
@@ -84,7 +82,7 @@ abstract contract BaseInitDebot is Debot{
         }(contractAddress, INITIAL_BALANCE, false, 3, empty);
     }
 
-    function onCreditError() public{
+    function onCreditError(uint32 sdkError, uint32 exitCode) public{
         ConfirmInput.get(tvm.functionId(onCreditErrorAnswer), "Error occured during creation. Please, check your wallet balance. Try again?");
     }
 
@@ -130,8 +128,8 @@ abstract contract BaseInitDebot is Debot{
         Sdk.getAccountType(tvm.functionId(checkIfContractHasBalance), contractAddress);
     }
 
-    function checkIfContractHasBalance(int8 accType) public {
-        if (accType ==  0) {
+    function checkIfContractHasBalance(int8 acc_type) public {
+        if (acc_type ==  0) {
             deploy();
         } else {
             waitBeforeCredit();

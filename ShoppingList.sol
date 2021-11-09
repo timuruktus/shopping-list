@@ -26,18 +26,21 @@ contract ShoppingList is PurchasesContainer{
     function addToPurchasesList(string name, uint amount) public override onlyOwner{
         tvm.accept();
         nextPurchaseId++;
-        purchases[nextPurchaseId] = Purchase(nextPurchaseId, name, amount, now, false, 0);
+        purchases[nextPurchaseId] = Purchase(nextPurchaseId, name, amount, now, false, 0, false);
     }
 
-    function deleteFromPurchasesList(uint id) public override{
-        require(purchases.exists(id), 102);
-        tvm.accept();
-        delete purchases[id];
+    function deleteFromPurchasesList(uint id) public override onlyOwner{
+        require(!purchases[id].deleted, 104);
+        if(purchases.exists(id)){
+            tvm.accept();
+            purchases[id].deleted = true;
+        }
     }
 
-    function buy(uint id, uint price) public override{
+    function buy(uint id, uint price) public override onlyOwner{
         optional(Purchase) purchaseToBuy = purchases.fetch(id);
-        require(purchaseToBuy.hasValue(), 102);
+        require(purchaseToBuy.hasValue(), 103);
+        require(!purchases[id].deleted, 104);
         tvm.accept();
         purchases[id].totalPrice = price;
         purchases[id].purchased = true;
@@ -47,21 +50,37 @@ contract ShoppingList is PurchasesContainer{
         tvm.accept();
         PurchasesSummary summary;
         for((uint id, Purchase purchaseToBuy) : purchases){
-            if(purchaseToBuy.purchased){
-                summary.totalPaidAmount += purchaseToBuy.amount;
-                summary.totalPaidPrice += purchaseToBuy.totalPrice;
-            } else{
-                summary.totalNotPaidAmount += purchaseToBuy.amount;
-            } 
+            if(!purchaseToBuy.deleted){
+                if(purchaseToBuy.purchased){
+                    summary.totalPaidAmount += purchaseToBuy.amount;
+                    summary.totalPaidPrice += purchaseToBuy.totalPrice;
+                } else{
+                    summary.totalNotPaidAmount += purchaseToBuy.amount;
+                } 
+            }
         }
         return summary;
     }
 
-    function getPurchasesList() public override returns(Purchase[]){
-        Purchase[] purchasesList;
-        for((uint id, Purchase purchaseToBuy) : purchases){
-            purchasesList.push(purchaseToBuy);
-        }
-        return purchasesList;
+    function getPurchasesList() public override returns(Purchase[] purchasesList){
+        uint id;
+        string name;
+        uint amount;
+        uint whenCreated;
+        bool purchased;
+        uint totalPrice;
+        bool deleted;
+
+        for((uint _id, Purchase purchase) : purchases) {
+            if(!purchase.deleted){
+                id = _id;
+                name = purchase.name;
+                amount = purchase.amount;
+                whenCreated = purchase.whenCreated;
+                purchased = purchase.purchased;
+                totalPrice = purchase.totalPrice;
+                purchasesList.push(Purchase(id, name, amount, whenCreated, purchased, totalPrice, false));
+            }
+       }
     }
 }

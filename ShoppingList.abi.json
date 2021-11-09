@@ -49,7 +49,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"id","type":"uint256"},{"name":"name","type":"bytes"},{"name":"amount","type":"uint256"},{"name":"whenCreated","type":"uint256"},{"name":"purchased","type":"bool"},{"name":"totalPrice","type":"uint256"}],"name":"value0","type":"tuple[]"}
+				{"components":[{"name":"id","type":"uint256"},{"name":"name","type":"bytes"},{"name":"amount","type":"uint256"},{"name":"whenCreated","type":"uint256"},{"name":"purchased","type":"bool"},{"name":"totalPrice","type":"uint256"},{"name":"deleted","type":"bool"}],"name":"purchasesList","type":"tuple[]"}
 			]
 		}
 	],

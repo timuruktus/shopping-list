@@ -10,6 +10,7 @@ struct Purchase{
     uint whenCreated;
     bool purchased;
     uint totalPrice;
+    bool deleted;
 }
 
 struct PurchasesSummary{
@@ -19,8 +20,8 @@ struct PurchasesSummary{
 }
 
 interface PurchasesContainer {
-    function getPurchasesSummary() external returns (PurchasesSummary);
-    function getPurchasesList() external returns(Purchase[]);
+    function getPurchasesSummary() external returns (PurchasesSummary summary);
+    function getPurchasesList() external returns(Purchase[] purchasesList);
     function addToPurchasesList(string name, uint amount) external;
     function deleteFromPurchasesList(uint id) external;
     function buy(uint id, uint price) external;

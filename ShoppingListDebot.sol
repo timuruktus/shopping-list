@@ -16,12 +16,13 @@ contract ShoppingListDebot is BaseListDebot{
             [
                 MenuItem("Buy product from shopping list", "", tvm.functionId(buyProduct)),
                 MenuItem("Remove product from shopping list", "", tvm.functionId(removeFromShoppingList)),
-                MenuItem("Show your shopping list", "", tvm.functionId(showShoppingList))
+                MenuItem("Show my shopping list", "", tvm.functionId(showShoppingList))
             ]
         );
     }
 
-    function buyProduct() public{
+    function buyProduct(uint32 index) public{
+        index = index;
         Terminal.input(tvm.functionId(_buyProduct), "Please, enter product id to buy", false);
     }
 
@@ -50,7 +51,7 @@ contract ShoppingListDebot is BaseListDebot{
         showData();
     }
 
-    function onBoughtError() public{
+    function onBoughtError(uint32 sdkError, uint32 exitCode) public{
         Terminal.print(0, "Error occured. Please, try another id.");
         showData();
     }

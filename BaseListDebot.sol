@@ -16,9 +16,11 @@ abstract contract BaseListDebot is BaseInitDebot{
             );
     }
 
-    function printShoppingList(Purchase[] purchasesList) internal returns(string){
-        if(purchasesList.length == 0) return "You don't have any items in your shopping list. Try add something.";
-        else{
+    function printShoppingList(Purchase[] purchasesList) internal{
+        if(purchasesList.length == 0){
+            Terminal.print(0, "You don't have any items in your shopping list. Try add something.");
+            showData();
+        } else{
             string list = "";
             for(uint i = 0; i < purchasesList.length; i++){
                 Purchase purchase = purchasesList[i];
@@ -29,38 +31,42 @@ abstract contract BaseListDebot is BaseInitDebot{
                 else purchased = "✘";  
                 Terminal.print(0, format("{}. {} {}", id, name, purchased));
             }
+            showData();
         } 
     }
 
-    function showShoppingList() public{
+    function showShoppingList(uint32 index) public{
+        index = index;
+        optional(uint256) none;
         PurchasesContainer(contractAddress).getPurchasesList{
             extMsg: true,
             abiVer: 2,
-            sign: true,
-            pubkey: userPubKey,
+            sign: false,
+            pubkey: none,
             time: uint64(now),
             expire: 0,
             callbackId: tvm.functionId(_showShoppingList),
-            onErrorId: tvm.functionId(showShoppingListRepeat) // Just repeat.
+            onErrorId: tvm.functionId(showShoppingListError)
         }();
     }
 
-    function _showShoppingList(Purchase[] purchases) public{
-        printShoppingList(purchases);
+    function _showShoppingList(Purchase[] purchasesList) public{
+        printShoppingList(purchasesList);
     }
 
-    function showShoppingListRepeat() public{
-        showShoppingList();
+    function showShoppingListError(uint32 sdkError, uint32 exitCode) public{
+        Terminal.print(0, "Error. Try again!");
+        showData();
     }
 
-    function removeFromShoppingList() public{
+    function removeFromShoppingList(uint32 index) public{
         Terminal.input(tvm.functionId(_removeFromShoppingList), "Please, enter the id of the product to delete.", false);
     }
 
     function _removeFromShoppingList(string value) public{
         (uint id, bool valid) = stoi(value);
         if(!valid){
-            onDeleteError();
+            onDeleteError(0, 0);
             return;
         } 
         PurchasesContainer(contractAddress).deleteFromPurchasesList{
@@ -80,7 +86,7 @@ abstract contract BaseListDebot is BaseInitDebot{
         showData();
     }
 
-    function onDeleteError() public{
+    function onDeleteError(uint32 sdkError, uint32 exitCode) public{
         Terminal.print(0, "Error occured. Try another id");
         showData();
     }
@@ -90,11 +96,12 @@ abstract contract BaseListDebot is BaseInitDebot{
     }
 
     function showData() public override{
+        optional(uint256) none;
         PurchasesContainer(contractAddress).getPurchasesSummary{
             extMsg: true,
             abiVer: 2,
-            sign: true,
-            pubkey: userPubKey,
+            sign: false,
+            pubkey: none,
             time: uint64(now),
             expire: 0,
             callbackId: tvm.functionId(showMenu),
@@ -102,7 +109,8 @@ abstract contract BaseListDebot is BaseInitDebot{
         }();
     }
 
-    function showDataRepeat() public{
+    function showDataRepeat(uint32 sdkError, uint32 exitCode) public{
+        Terminal.print(0, "Some error occured while showing summary");
         showData();
     }
 
