@@ -20,13 +20,13 @@ abstract contract BaseInitDebot is Debot{
     address creationAccount;
     int8 constant ACTIVE = 1;
     int8 constant NOT_ENOUGH_BALANCE = -1;
-    int8 constant NOT_DEPLOYED = 0;
+    int8 constant HAS_BALANCE_NOT_DEPLOYED = 0;
     int8 constant FROZEN = 2;
     uint32 INITIAL_BALANCE =  200000000; // 0.2 TON
     
 
     function start() public override{
-        Terminal.input(tvm.functionId(savePublicKey),"Hello. Please enter your public key",false);
+        Terminal.input(tvm.functionId(savePublicKey),"Hello. Please, enter your public key",false);
     }
 
     function setContractCode(TvmCell code, TvmCell data) public {
@@ -55,18 +55,16 @@ abstract contract BaseInitDebot is Debot{
             showData();
         }else if(acc_type == NOT_ENOUGH_BALANCE)  { 
             Terminal.print(0, "You don't have a Shopping list yet, so a new contract with an initial balance of 0.2 tokens will be deployed");
-            AddressInput.get(tvm.functionId(creditAccount),"Select a wallet for payment. We will ask you to sign two transactions.");
-        }else if(acc_type == NOT_DEPLOYED) { 
-            Terminal.print(0, format(
-                "Deploying new contract. If an error occurs, check if your Shopping list contract has enough tokens on its balance."
-            ));
+            AddressInput.get(tvm.functionId(creditContract),"Select a wallet for payment. We will ask you to sign two transactions.");
+        }else if(acc_type == HAS_BALANCE_NOT_DEPLOYED) { 
+            Terminal.print(0, format("Deploying new contract. If an error occurs, please, try again."));
             deploy();
         }else if(acc_type == FROZEN) {  
             Terminal.print(0, format("Can not continue: account {} is frozen", contractAddress));
         }
     }
 
-    function creditAccount(address value) public {
+    function creditContract(address value) public {
         creationAccount = value;
         optional(uint256) pubkey = 0;
         TvmCell empty;
@@ -88,7 +86,7 @@ abstract contract BaseInitDebot is Debot{
 
     function onCreditErrorAnswer(bool tryAgain) public{
         if(tryAgain){
-            creditAccount(creationAccount);
+            creditContract(creationAccount);
         }else{
             start();
         }
@@ -116,40 +114,19 @@ abstract contract BaseInitDebot is Debot{
         ConfirmInput.get(tvm.functionId(onDeployErrorAnswer), "Error occured during deploy. Please, check your wallet balance. Try again?");
     }
 
-    function onDeployErrorAnswer(bool tryAgain) public{
-        if(tryAgain){
-            deploy();
-        }else{
-            start();
-        }
+    function onDeployErrorAnswer(bool value) public{
+        bool tryAgain = value;
+        if(tryAgain) deploy();
+        else start();
     }
 
     function waitBeforeCredit() public  {
-        Sdk.getAccountType(tvm.functionId(checkIfContractHasBalance), contractAddress);
+        Sdk.getAccountType(tvm.functionId(checkIfContractHasDeployed), contractAddress);
     }
 
-    function checkIfContractHasBalance(int8 acc_type) public {
-        if (acc_type ==  0) {
-            deploy();
-        } else {
-            waitBeforeCredit();
-        }
-    }
-
-    function getDebotInfo() public functionID(0xDEB) override view returns(
-        string name, string version, string publisher, string caption, string author,
-        address support, string hello, string language, string dabi, bytes icon
-    ) {
-        name = "Shopping list DeBot";
-        version = "0.2.0";
-        publisher = "Timur Khasanov";
-        caption = "Shopping list manager";
-        author = "Timur Khasanov";
-        support = address.makeAddrStd(0, 0x1e3713373c839489cd84f0745d7f98a0ba3bcdbd91a56ac30c79f769303ec603);
-        hello = "Hi, i'm a Shopping list DeBot.";
-        language = "en";
-        dabi = m_debotAbi.get();
-        icon = iconPath;
+    function checkIfContractHasDeployed(int8 acc_type) public {
+        if (acc_type ==  HAS_BALANCE_NOT_DEPLOYED) deploy();
+        else waitBeforeCredit();
     }
 
     function getRequiredInterfaces() public view override returns (uint256[] interfaces) {

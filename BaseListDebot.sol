@@ -16,7 +16,7 @@ abstract contract BaseListDebot is BaseInitDebot{
             );
     }
 
-    function printShoppingList(Purchase[] purchasesList) internal{
+    function printShoppingList(Purchase[] purchasesList) public{
         if(purchasesList.length == 0){
             Terminal.print(0, "You don't have any items in your shopping list. Try add something.");
             showData();
@@ -27,16 +27,16 @@ abstract contract BaseListDebot is BaseInitDebot{
                 string name = purchasesList[i].name;
                 string purchased;
                 uint id = purchase.id;
+                uint price = purchase.totalPrice;
                 if(purchase.purchased) purchased = "✔";
                 else purchased = "✘";  
-                Terminal.print(0, format("{}. {} {}", id, name, purchased));
+                Terminal.print(0, format("{}. {} {}. Price = {}", id, name, purchased, price));
             }
             showData();
         } 
     }
 
     function showShoppingList(uint32 index) public{
-        index = index;
         optional(uint256) none;
         PurchasesContainer(contractAddress).getPurchasesList{
             extMsg: true,
@@ -45,13 +45,9 @@ abstract contract BaseListDebot is BaseInitDebot{
             pubkey: none,
             time: uint64(now),
             expire: 0,
-            callbackId: tvm.functionId(_showShoppingList),
+            callbackId: tvm.functionId(printShoppingList),
             onErrorId: tvm.functionId(showShoppingListError)
         }();
-    }
-
-    function _showShoppingList(Purchase[] purchasesList) public{
-        printShoppingList(purchasesList);
     }
 
     function showShoppingListError(uint32 sdkError, uint32 exitCode) public{
@@ -59,16 +55,13 @@ abstract contract BaseListDebot is BaseInitDebot{
         showData();
     }
 
-    function removeFromShoppingList(uint32 index) public{
-        Terminal.input(tvm.functionId(_removeFromShoppingList), "Please, enter the id of the product to delete.", false);
+    function removeIdInput(uint32 index) public{
+        Terminal.input(tvm.functionId(removeFromShoppingList), "Please, enter the id of the product to delete.", false);
     }
 
-    function _removeFromShoppingList(string value) public{
+    function removeFromShoppingList(string value) public{
         (uint id, bool valid) = stoi(value);
-        if(!valid){
-            onDeleteError(0, 0);
-            return;
-        } 
+        require(valid, 202);
         PurchasesContainer(contractAddress).deleteFromPurchasesList{
             extMsg: true,
             abiVer: 2,

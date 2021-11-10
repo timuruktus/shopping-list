@@ -9,7 +9,7 @@ contract ShoppingList is PurchasesContainer{
 
     uint ownerPubKey;
     uint nextPurchaseId;
-    mapping(uint => Purchase) purchases;
+    mapping(uint => Purchase) idToPurchaseMapping;
 
     constructor(uint pubkey) public {
         require(pubkey != 0, 120);
@@ -26,30 +26,30 @@ contract ShoppingList is PurchasesContainer{
     function addToPurchasesList(string name, uint amount) public override onlyOwner{
         tvm.accept();
         nextPurchaseId++;
-        purchases[nextPurchaseId] = Purchase(nextPurchaseId, name, amount, now, false, 0, false);
+        idToPurchaseMapping[nextPurchaseId] = Purchase(nextPurchaseId, name, amount, now, false, 0, false);
     }
 
     function deleteFromPurchasesList(uint id) public override onlyOwner{
-        require(!purchases[id].deleted, 104);
-        if(purchases.exists(id)){
+        require(!idToPurchaseMapping[id].deleted, 104);
+        if(idToPurchaseMapping.exists(id)){
             tvm.accept();
-            purchases[id].deleted = true;
+            idToPurchaseMapping[id].deleted = true;
         }
     }
 
     function buy(uint id, uint price) public override onlyOwner{
-        optional(Purchase) purchaseToBuy = purchases.fetch(id);
+        optional(Purchase) purchaseToBuy = idToPurchaseMapping.fetch(id);
         require(purchaseToBuy.hasValue(), 103);
-        require(!purchases[id].deleted, 104);
+        require(!idToPurchaseMapping[id].deleted, 104);
         tvm.accept();
-        purchases[id].totalPrice = price;
-        purchases[id].purchased = true;
+        idToPurchaseMapping[id].totalPrice = price;
+        idToPurchaseMapping[id].purchased = true;
     }
 
     function getPurchasesSummary() public override returns(PurchasesSummary){
         tvm.accept();
         PurchasesSummary summary;
-        for((uint id, Purchase purchaseToBuy) : purchases){
+        for((uint id, Purchase purchaseToBuy) : idToPurchaseMapping){
             if(!purchaseToBuy.deleted){
                 if(purchaseToBuy.purchased){
                     summary.totalPaidAmount += purchaseToBuy.amount;
@@ -71,7 +71,7 @@ contract ShoppingList is PurchasesContainer{
         uint totalPrice;
         bool deleted;
 
-        for((uint _id, Purchase purchase) : purchases) {
+        for((uint _id, Purchase purchase) : idToPurchaseMapping) {
             if(!purchase.deleted){
                 id = _id;
                 name = purchase.name;
